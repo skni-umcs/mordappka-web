@@ -1,7 +1,11 @@
-import Timetable from '../componetns/Timetable';
-
+import ClassFinder from '../componetns/classExplorer/ClassFinder';
+import Timetable from '../componetns/timetable/Timetable';
+import './Home.scss'
 export default function Home(){
     return (
-        <Timetable/>
+        <div className='home'>
+            <Timetable/>
+            <ClassFinder/>
+        </div>
     )
 }
