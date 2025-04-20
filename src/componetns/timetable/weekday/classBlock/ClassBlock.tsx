@@ -1,6 +1,23 @@
+import { ClassDataDTO } from '../../Timetable';
+import { BlockMetadata } from '../Weekday';
 import './ClassBlock.scss'
 
-function ClassBlock(){
-    return <div>classblock</div>
+interface Prop{
+    block:ClassDataDTO;
+    metadata:BlockMetadata;
+}
+
+function ClassBlock(prop:Prop){
+    return <div
+    className='classBlock'
+    style={{
+        top: `${prop.metadata.posY}px`,
+        left: `${prop.metadata.posX || 0}px`,
+        height: `${prop.metadata.height}px`,
+      }}
+    >
+        <p>{prop.block.subjectName}</p>
+        <p>{prop.block.startTime} - {prop.block.endTime}</p>
+    </div>
 }
 export default ClassBlock;
