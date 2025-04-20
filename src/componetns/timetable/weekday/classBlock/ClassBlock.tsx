@@ -14,6 +14,7 @@ function ClassBlock(prop:Prop){
         top: `${prop.metadata.posY}px`,
         left: `${prop.metadata.posX || 0}px`,
         height: `${prop.metadata.height}px`,
+        width: `${prop.metadata.width}px`
       }}
     >
         <p>{prop.block.subjectName}</p>

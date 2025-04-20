@@ -39,8 +39,8 @@ function Timetable(){
                 classType: "Wykład",
                 subjectName: "Układy mikroporcesorowe",
                 teacherName: "Andrzej Kowalski",
-                startTime: "8:00",
-                endTime: "9:00",
+                startTime: "8:45",
+                endTime: "10:00",
                 weekday: 1,
                 roomNumber: "C453",
                 teacherId: 32,
@@ -51,8 +51,8 @@ function Timetable(){
             classType: "Wykład",
             subjectName: "Układy mikroporcesorowe",
             teacherName: "Andrzej Kowalski",
-            startTime: "9:00",
-            endTime: "10:00",
+            startTime: "8:00",
+            endTime: "12:00",
             weekday: 1,
             roomNumber: "C453",
             teacherId: 32,
@@ -70,7 +70,21 @@ function Timetable(){
             teacherId: 32,
             roomId: 34,
             group: "1/1"
-        }]);
+        },
+        {
+            classId: 223,
+            classType: "Laby",
+            subjectName: "ASYKO<3",
+            teacherName: "Andrzej Kowalski",
+            startTime: "11:00",
+            endTime: "12:00",
+            weekday: 1,
+            roomNumber: "C453",
+            teacherId: 32,
+            roomId: 34,
+            group: "1/1"
+        }
+    ]);
     },[])
     
 
