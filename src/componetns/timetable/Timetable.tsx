@@ -16,7 +16,6 @@ export interface ClassDataDTO{
     teacherId: number;
     roomId: number;
     group: string;
-
 }
 
 function Timetable(){
@@ -63,7 +62,7 @@ function Timetable(){
             classType: "Laby",
             subjectName: "Inżynieria Oprogramowania",
             teacherName: "Andrzej Kowalski",
-            startTime: "12:30",
+            startTime: "11:30",
             endTime: "14:25",
             weekday: 1,
             roomNumber: "C453",

@@ -6,7 +6,6 @@ interface Prop{
     classBlocks:ClassDataDTO[];
 }
 export interface BlockMetadata{
-    //vertical offset needed when overlapping blocks are introduced
     posX?:number;
     posY:number;
     height:number;
@@ -31,11 +30,11 @@ function getTimeInMinutes(time:string){
 function getBlockHeight(ttConfig:WeekdayConfig, blockStart:number, blockEnd:number){
     return ((blockEnd-blockStart)/ttConfig.duration) * ttConfig.maxDisplayHeight;
 }
-// TODO: overlapping blocks
-function calcBlockMetadata(ttConfig:WeekdayConfig, block:ClassDataDTO, overlapDict:{
-    [key: string]: [number,number]
-})
-    :BlockMetadata{
+function calcBlockMetadata(ttConfig:WeekdayConfig, block:ClassDataDTO,
+    overlapDict:{
+        [key: string]: [number,number]
+    }):BlockMetadata
+    {
     let blockStartTimeMM = getTimeInMinutes(block.startTime);
     let blockEndTimeMM = getTimeInMinutes(block.endTime);
     let blockPosY = timelerp(ttConfig, blockStartTimeMM);
@@ -55,43 +54,127 @@ function overlap(cb1: ClassDataDTO, cb2:ClassDataDTO):boolean{
     const cb2te = getTimeInMinutes(cb2.endTime);
     return (cb2ts >= cb1ts && cb2ts < cb1te) || (cb1ts >= cb2ts && cb1ts < cb2te) 
 }
-function generateOverlapData(data:ClassDataDTO[]):any{
-    // mapa <string,tuple<number,number>> "asdad":[max_overlap,assignedRow]
-    let cbOverlap:{ [key: string]: [number,number] } = {};
+class AdjecencyGraph{
+    indexMap: {[key:number]:number};
+    
+    maxConectedness: number[];
+    //this.e[vertex] = [1,4,5]
+    e: {[key:number]:number[]};
+    //starting index of subgraph
+    subgraphs: number[][];
+    subgraph: number[];
+    constructor(){
+        this.subgraph = [];
+        this.e = {};
+        this.indexMap = [];
+        this.subgraphs = [];
+        this.maxConectedness = [];
+    }
+    recalculateOverlap(data:ClassDataDTO[]){
+        this.e = [];
+        this.subgraphs = [];
+        this.indexMap = [];
 
-    data.forEach((el)=>{cbOverlap[el.classId]=[0,-1]})
-    data.sort(
-        (cb1, cb2) => {
-        const t1 = getTimeInMinutes(cb1.startTime);
-        const t2 = getTimeInMinutes(cb2.startTime);
-        return (t1>t2)?1:0;
-    })
-    for (let i = 0 ; i<data.length-1;i++){
-        let j = 0;
-        while(overlap(data[i],data[i+j+1])){
-            const cb1Ind = data[i].classId;
-            const cb2Ind = data[i+ j + 1].classId; 
-            cbOverlap[cb1Ind][0]++;
-            cbOverlap[cb2Ind][0]++;
-
-            if(cbOverlap[cb1Ind][1] == -1 && cbOverlap[cb2Ind][1] == -1){
-                cbOverlap[cb1Ind][1] = 0;
-                cbOverlap[cb2Ind][1] = 1
-            }
-            else{
-                if(cbOverlap[cb1Ind][1] == -1){
-                    cbOverlap[cb1Ind][1] = cbOverlap[cb2Ind][1] + 1;
+        //init values
+        let visited = new Array<boolean>(data.length).fill(false);
+        
+        for(let i = 0;i<data.length;i++){
+            this.indexMap[i] = data[i].classId;
+            this.e[i] = [];
+        }        
+        //generate edges
+        for(let i = 0; i < data.length; i++){
+            for (let j = 0; j < data.length; j++) {
+                if(i != j){
+                    if(overlap(data[i],data[j])){
+                        this.e[i].push(j); 
+                    }
                 }
-                else{
-                    cbOverlap[cb2Ind][1] = cbOverlap[cb1Ind][1] + 1;
-
-                }
             }
+        }
+        // subgraphs = [[0,1,2],[3],[4,5]]
+        // array of node index array
 
-            j++;
+        let selected: number|null; 
+        while(visited.includes(false)){
+            //get first unvisited node if selected is none;
+            let group: number[] = []
+            selected = visited.findIndex(e=>!e);
+            this.dfs(selected, visited, group);
+            this.subgraphs.push(group);
+        }
+        for(let i = 0 ; i< this.subgraphs.length; i++){
+            for(let j = 0;j<this.subgraphs[i].length;j++){
+                this.subgraph[this.subgraphs[i][j]] = i;
+            }
+        }
+        //the clique problem https://en.wikipedia.org/wiki/Clique_problem
+        let maxOverlapPerGroup:number[] = [];
+        for(let subG of this.subgraphs){
+            const maxOverlap = this.findMaximumClique(this.createSubset(this.e, subG));
+            maxOverlapPerGroup.push(maxOverlap.length);
+            // console.log({subG, maxOverlap});
+        }
+        console.log({maxOverlapPerGroup});
+    }
+    dfs(startingNode:number, visited:boolean[], group:number[]){
+        if(!visited[startingNode]){
+
+            visited[startingNode] = true;
+            group.push(startingNode);
+            if(this.e[startingNode]===undefined){return;}
+
+            for(let i = 0 ;i < this.e[startingNode].length;i++){
+                this.dfs(this.e[startingNode][i], visited,group);
+            }
         }
     }
-    console.log(cbOverlap);
+    createSubset(graph:{[key:number]:number[]}, subset:number[]):{[key:number]:number[]}{
+        let subgraph:{[key:number]:number[]} = {};
+        for(let i of subset){
+            subgraph[i] = graph[i];
+        }
+        return subgraph;
+    }
+    //per subgraph
+    findMaximumClique(graph: {[key:number]:number[]}): number[] {
+        let maxClique: number[] = [];
+      
+        function isNeighborOfAll(node: number, clique: number[]): boolean {
+          return clique.every(member => graph[node].includes(member));
+        }
+      
+        function backtrack(current: number[], candidates: number[]) {
+          if (candidates.length === 0) {
+            if (current.length > maxClique.length) {
+              maxClique = [...current];
+            }
+            return;
+          }
+      
+          for (let i = 0; i < candidates.length; i++) {
+            const node = candidates[i];
+            const newCurrent = [...current, node];
+            const newCandidates = candidates
+              .slice(i + 1)
+              .filter(n => isNeighborOfAll(n, newCurrent));
+            backtrack(newCurrent, newCandidates);
+          }
+        }
+        
+        // const allVertices = graph.map((_, i) => i);
+        const allVertices = Object.keys(graph).map(Number);
+        backtrack([], allVertices);
+        return maxClique;
+      }
+}
+function generateOverlapData(data:ClassDataDTO[]):{ [key: string]: [number,number] }{
+    // mapa <string,tuple<number,number>> "asdad":[max_overlap,assignedRow]
+    let cbOverlap:{ [key: string]: [number,number] } = {};
+    const adjGraph = new AdjecencyGraph();
+    adjGraph.recalculateOverlap(data);
+
+    data.forEach((el)=>{cbOverlap[el.classId]=[0,-1]})
     return cbOverlap;   
 }
 function Weekday(prop: Prop){
@@ -102,8 +185,14 @@ function Weekday(prop: Prop){
         endTime,
         duration: endTime - startTime,
         maxDisplayHeight:700,
-        displayWidth:200
+        displayWidth:320
     }
+    prop.classBlocks.sort(
+        (cb1, cb2) => {
+        const t1 = getTimeInMinutes(cb1.startTime);
+        const t2 = getTimeInMinutes(cb2.startTime);
+        return (t1>t2)?1:0;
+    })
 
     const overlapDict = generateOverlapData(prop.classBlocks);
 

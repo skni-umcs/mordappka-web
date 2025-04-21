@@ -5,7 +5,7 @@ export default function Home(){
     return (
         <div className='home'>
             <Timetable/>
-            <ClassFinder/>
+            {/* <ClassFinder/> */}
         </div>
     )
 }
