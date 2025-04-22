@@ -32,15 +32,19 @@ function getBlockHeight(ttConfig:WeekdayConfig, blockStart:number, blockEnd:numb
 }
 function calcBlockMetadata(ttConfig:WeekdayConfig, block:ClassDataDTO,
     overlapDict:{
-        [key: string]: [number,number]
+        [key: string]: [number,number, number]
     }):BlockMetadata
     {
+    
     let blockStartTimeMM = getTimeInMinutes(block.startTime);
     let blockEndTimeMM = getTimeInMinutes(block.endTime);
     let blockPosY = timelerp(ttConfig, blockStartTimeMM);
     let blockHeight = getBlockHeight(ttConfig, blockStartTimeMM, blockEndTimeMM);
-    let blockWidth = ttConfig.displayWidth/(overlapDict[block.classId][0]+1);
-    let posXOffset = overlapDict[block.classId][1]==-1? 0 : overlapDict[block.classId][1]*blockWidth; 
+    console.log(overlapDict[block.classId], block)
+    let blockWidth = ttConfig.displayWidth*(overlapDict[block.classId][2]/overlapDict[block.classId][0]);
+    
+    let posXOffset = overlapDict[block.classId][1]/overlapDict[block.classId][0] * ttConfig.displayWidth; 
+    console.log({posXOffset})
     return {
         posY:blockPosY,
         height:blockHeight,
@@ -57,7 +61,7 @@ function overlap(cb1: ClassDataDTO, cb2:ClassDataDTO):boolean{
 class AdjecencyGraph{
     indexMap: {[key:number]:number};
     
-    maxConectedness: number[];
+    maxOverlap: number[];
     //this.e[vertex] = [1,4,5]
     e: {[key:number]:number[]};
     //starting index of subgraph
@@ -68,18 +72,18 @@ class AdjecencyGraph{
         this.e = {};
         this.indexMap = [];
         this.subgraphs = [];
-        this.maxConectedness = [];
+        this.maxOverlap = [];
     }
     recalculateOverlap(data:ClassDataDTO[]){
         this.e = [];
         this.subgraphs = [];
         this.indexMap = [];
-
+        this.maxOverlap = [];
         //init values
         let visited = new Array<boolean>(data.length).fill(false);
         
         for(let i = 0;i<data.length;i++){
-            this.indexMap[i] = data[i].classId;
+            this.indexMap[data[i].classId] = i;
             this.e[i] = [];
         }        
         //generate edges
@@ -115,7 +119,8 @@ class AdjecencyGraph{
             maxOverlapPerGroup.push(maxOverlap.length);
             // console.log({subG, maxOverlap});
         }
-        console.log({maxOverlapPerGroup});
+        this.maxOverlap = maxOverlapPerGroup;
+        // console.log({maxOverlapPerGroup});
     }
     dfs(startingNode:number, visited:boolean[], group:number[]){
         if(!visited[startingNode]){
@@ -168,13 +173,24 @@ class AdjecencyGraph{
         return maxClique;
       }
 }
-function generateOverlapData(data:ClassDataDTO[]):{ [key: string]: [number,number] }{
-    // mapa <string,tuple<number,number>> "asdad":[max_overlap,assignedRow]
-    let cbOverlap:{ [key: string]: [number,number] } = {};
+function generateOverlapData(data:ClassDataDTO[]):{ [key: string]: [number,number,number] }{
+    // mapa <string,tuple<number,number>> "asdad":[max_overlap,assignedRow,rowspan]
+    let cbOverlap:{ [key: string]: [number,number, number]} = {};
+
     const adjGraph = new AdjecencyGraph();
     adjGraph.recalculateOverlap(data);
 
-    data.forEach((el)=>{cbOverlap[el.classId]=[0,-1]})
+
+    data.forEach((el)=>{
+        let maxOverlap = adjGraph.maxOverlap[adjGraph.subgraph[adjGraph.indexMap[el.classId]]]
+        let rowspan = maxOverlap - adjGraph.e[adjGraph.indexMap[el.classId]].length
+        rowspan = rowspan==0?1:rowspan;
+        let pos = Math.round(Math.random()*(maxOverlap-1));
+        cbOverlap[el.classId]=[maxOverlap,pos,rowspan]
+    })
+
+
+
     return cbOverlap;   
 }
 function Weekday(prop: Prop){
