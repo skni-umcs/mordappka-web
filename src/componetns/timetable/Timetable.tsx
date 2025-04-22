@@ -82,6 +82,19 @@ function Timetable(){
             teacherId: 32,
             roomId: 34,
             group: "1/1"
+        },
+        {
+            classId: 2231,
+            classType: "Laby",
+            subjectName: "ASYKO<3",
+            teacherName: "Andrzej Kowalski",
+            startTime: "15:00",
+            endTime: "18:00",
+            weekday: 1,
+            roomNumber: "C453",
+            teacherId: 32,
+            roomId: 34,
+            group: "1/1"
         }
     ]);
     },[])

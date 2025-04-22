@@ -60,7 +60,7 @@ function overlap(cb1: ClassDataDTO, cb2:ClassDataDTO):boolean{
 }
 class AdjecencyGraph{
     indexMap: {[key:number]:number};
-    
+    order:number[];
     maxOverlap: number[];
     //this.e[vertex] = [1,4,5]
     e: {[key:number]:number[]};
@@ -70,6 +70,7 @@ class AdjecencyGraph{
     constructor(){
         this.subgraph = [];
         this.e = {};
+        this.order = [];
         this.indexMap = [];
         this.subgraphs = [];
         this.maxOverlap = [];
@@ -80,6 +81,7 @@ class AdjecencyGraph{
         this.indexMap = [];
         this.maxOverlap = [];
         //init values
+        this.order = new Array<number>(data.length).fill(-1);
         let visited = new Array<boolean>(data.length).fill(false);
         
         for(let i = 0;i<data.length;i++){
@@ -104,7 +106,7 @@ class AdjecencyGraph{
             //get first unvisited node if selected is none;
             let group: number[] = []
             selected = visited.findIndex(e=>!e);
-            this.dfs(selected, visited, group);
+            this.dfs(selected, visited, group, this.order);
             this.subgraphs.push(group);
         }
         for(let i = 0 ; i< this.subgraphs.length; i++){
@@ -122,15 +124,35 @@ class AdjecencyGraph{
         this.maxOverlap = maxOverlapPerGroup;
         // console.log({maxOverlapPerGroup});
     }
-    dfs(startingNode:number, visited:boolean[], group:number[]){
+    dfs(startingNode:number, visited:boolean[], group:number[], order:number[]){
         if(!visited[startingNode]){
 
-            visited[startingNode] = true;
+            visited[startingNode] = true;            
             group.push(startingNode);
             if(this.e[startingNode]===undefined){return;}
+            //pick lowest order possible order among neigbours
+            let min = new Array<boolean>(100).fill(false);
 
+            for( let i = 0 ;i < this.e[startingNode].length ; i++){
+                if(order[this.e[startingNode][i]]!=-1){
+                    min[i]=true;
+                }
+            }
+            if(!min.includes(true))
+            {
+                order[startingNode] = 0;
+            }
+            else{
+            //find first possible slot
+                for(let i =0 ;i<min.length;i++){
+                    if(!min[i]){
+                        order[startingNode] = i;
+                        break;
+                    }
+                }
+            }
             for(let i = 0 ;i < this.e[startingNode].length;i++){
-                this.dfs(this.e[startingNode][i], visited,group);
+                this.dfs(this.e[startingNode][i], visited,group,order);
             }
         }
     }
@@ -185,7 +207,8 @@ function generateOverlapData(data:ClassDataDTO[]):{ [key: string]: [number,numbe
         let maxOverlap = adjGraph.maxOverlap[adjGraph.subgraph[adjGraph.indexMap[el.classId]]]
         let rowspan = maxOverlap - adjGraph.e[adjGraph.indexMap[el.classId]].length
         rowspan = rowspan==0?1:rowspan;
-        let pos = Math.round(Math.random()*(maxOverlap-1));
+        // let pos = Math.round(Math.random()*(maxOverlap-1));
+        let pos = adjGraph.order[adjGraph.indexMap[el.classId]];
         cbOverlap[el.classId]=[maxOverlap,pos,rowspan]
     })
 
