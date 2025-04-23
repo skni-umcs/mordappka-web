@@ -1,0 +1,36 @@
+.sidebar {
+  background: #2c3e50;
+  padding: 1rem;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vh;
+
+  &.open {
+    width: 200px;
+  }
+
+  &.closed {
+    width: 50px;
+  }
+
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 1rem;
+    }
+  }
+}

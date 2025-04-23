@@ -1,0 +1,11 @@
+.layout {
+  display: flex;
+  height: 100vh;
+
+}
+
+.content {
+  flex-grow: 1;
+  padding: 1rem;
+  background: #ecf0f1;
+}
