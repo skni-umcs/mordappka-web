@@ -83,12 +83,14 @@ export class CollisionGraph{
             //if no neighbours its undefinded
             if(this.edges[startingNode]===undefined){return;}
             //pick lowest order possible order among neigbhours
-            let min = new Array<boolean>(100).fill(false);
+            let min = new Array<boolean>(15).fill(false);
             let numNeighbours = this.edges[startingNode].length
 
             for( let i = 0 ;i < numNeighbours ; i++){
-                if(this.order[this.edges[startingNode][i]]!=-1){
-                    min[i]=true;
+                const neigbour = this.edges[startingNode][i];
+                const neigbourOrder = this.order[neigbour]
+                if(neigbourOrder!=-1){
+                    min[neigbourOrder]=true;
                 }
             }
             if(!min.includes(true))

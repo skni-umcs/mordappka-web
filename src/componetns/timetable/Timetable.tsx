@@ -36,10 +36,10 @@ function Timetable(){
             {
                 classId: 11,
                 classType: "Wykład",
-                subjectName: "Układy mikroporcesorowe",
+                subjectName: "Algebra",
                 teacherName: "Andrzej Kowalski",
                 startTime: "8:45",
-                endTime: "10:00",
+                endTime: "11:01",
                 weekday: 1,
                 roomNumber: "C453",
                 teacherId: 32,
@@ -86,7 +86,7 @@ function Timetable(){
         {
             classId: 2231,
             classType: "Laby",
-            subjectName: "ASYKO<3",
+            subjectName: "Bazy danych",
             teacherName: "Andrzej Kowalski",
             startTime: "15:00",
             endTime: "18:00",

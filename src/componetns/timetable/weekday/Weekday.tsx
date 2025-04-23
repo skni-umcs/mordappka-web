@@ -119,7 +119,6 @@ function generateOverlapData(ttConfig: WeekdayConfig, data: ClassDataDTO[]): {[k
     let posXOffset =
       (cbOverlap[block.classId][1] / cbOverlap[block.classId][0]) *
       ttConfig.displayWidth;
-    console.log({ posXOffset });
     d[block.classId] = {
       posY: blockPosY,
       height: blockHeight,
