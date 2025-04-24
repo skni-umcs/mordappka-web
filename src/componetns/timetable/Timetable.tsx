@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Timetable.scss'
 import Weekday from './weekday/Weekday';
-import axios from 'axios';
+// import axios from 'axios';
 
 //to trzeba przenieść w jakieś odpowiednie miejsce
 export interface ClassDataDTO{

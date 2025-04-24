@@ -12,3 +12,7 @@ build-react:
   artifacts:
     paths:
       - ./dist
+
+build-container:
+  stage: dockerize
+  image:

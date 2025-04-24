@@ -1,4 +1,4 @@
-import ClassFinder from '../componetns/classExplorer/ClassFinder';
+// import ClassFinder from '../componetns/classExplorer/ClassFinder';
 import Timetable from '../componetns/timetable/Timetable';
 import './Home.scss'
 export default function Home(){
