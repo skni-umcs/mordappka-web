@@ -13,6 +13,3 @@ build-react:
     paths:
       - ./dist
 
-build-container:
-  stage: dockerize
-  image:
