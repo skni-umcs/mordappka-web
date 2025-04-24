@@ -1,0 +1,23 @@
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.logo {
+  width: 30%;
+}
+
+img{
+  width: 50%;
+}
+
+.content{
+  font-family: "Inconsolata", monospace;
+  font-size: 30px;
+
+  width: 70%;
+  padding: 10px;
+  text-align: center;
+  margin: auto;
+}
