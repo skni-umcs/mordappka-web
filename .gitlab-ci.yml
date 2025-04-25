@@ -41,6 +41,8 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    - echo "Oto HostName"
+    - echo $DEPLOY_SERVER
 
   script:
     - ssh -o StrictHostKeyChecking=accept-new $DEPLOY_USER@$DEPLOY_SERVER "
