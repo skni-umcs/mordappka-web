@@ -41,10 +41,9 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
 
   script:
-    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "
+    - ssh -o StrictHostKeyChecking=accept-new $DEPLOY_USER@$DEPLOY_SERVER "
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
         docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA &&
         docker stop mordappka_web || true &&
