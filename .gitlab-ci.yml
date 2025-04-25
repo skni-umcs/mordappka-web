@@ -50,7 +50,7 @@ deploy:
         docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA &&
         docker stop mordappka_web || true &&
         docker rm mordappka_web || true &&
-        docker run -d --name mordappka_web $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+        docker run -d -p 8080:80 --name mordappka_web $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
       "
   only:
     - main
