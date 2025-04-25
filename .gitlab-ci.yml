@@ -40,9 +40,9 @@ deploy:
     - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - cp $SSH_PRIVATE_KEY | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - cat ~/.ssh/id_rsa
+    # - cat ~/.ssh/id_rsa
 
   script:
     - ssh -o StrictHostKeyChecking=accept-new $DEPLOY_USER@$DEPLOY_SERVER "
