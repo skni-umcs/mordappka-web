@@ -1,7 +1,5 @@
-import { ClassDataDTO } from "../Timetable";
+import { ClassData, ClassDataDTO } from "../Timetable";
 import ClassBlock from "./classBlock/ClassBlock";
-import { CollisionGraph } from "./util/graph";
-import { getBlockHeight, getTimeInMinutes, timelerp } from "./util/util";
 import "./Weekday.scss";
 
 
@@ -41,15 +39,11 @@ import "./Weekday.scss";
   */
 
 interface Prop {
-  classBlocks: ClassDataDTO[];
-  weekday:number;
+  classBlocks: ClassData[];
+  weekday:string;
+  onVisibilityChange: (block: ClassDataDTO, visible: boolean) => void;
 }
-export interface BlockMetadata {
-  posX?: number;
-  posY: number;
-  height: number;
-  width?: number;
-}
+
 export interface WeekdayConfig {
   startTime: number;
   endTime: number;
@@ -59,81 +53,25 @@ export interface WeekdayConfig {
 }
 
 function Weekday(prop: Prop) {
-  const weekDayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
-  const startTime = getTimeInMinutes("8:00");
-  const endTime = getTimeInMinutes("20:00");
-  const ttConfig: WeekdayConfig = {
-    startTime,
-    endTime,
-    duration: endTime - startTime,
-    maxDisplayHeight: 700,
-    displayWidth: 320,
-  };
-  prop.classBlocks.sort((cb1, cb2) => {
-    const t1 = getTimeInMinutes(cb1.startTime);
-    const t2 = getTimeInMinutes(cb2.startTime);
-    return t1 > t2 ? 1 : 0;
-  });
-
-  const overlapDict = generateOverlapData(ttConfig, prop.classBlocks);
   //calculate metadata
   return (
-    <div>
-      <h2>{weekDayNames[prop.weekday-1]}</h2>
+    <div  style={{
+      width:prop.classBlocks.length===0?'120px':'320px'
+  }}>
+      <h2>{prop.weekday}</h2>
     <div className="weekday">
       {prop.classBlocks.map((cb) => {
-        //calculate block metadata
         return (
           <ClassBlock
-            key={cb.classId}
-            metadata={overlapDict[cb.classId]}
+            key={cb.cbDTO.classId}
             block={cb}
+            onVisibilityChange={prop.onVisibilityChange}
           />
         );
       })}
     </div>
     </div>
   );
-}
-
-function generateOverlapData(ttConfig: WeekdayConfig, data: ClassDataDTO[]): {[key: number]: BlockMetadata} {
-  let cbOverlap: { [key: string]: [number, number, number] } = {};
-  const colGraph = new CollisionGraph(data);
-  data.forEach((block) => {
-    let maxOverlap = colGraph.getMaxOverlap(block.classId);
-    let rowspan = colGraph.getRowspan(block.classId);
-    rowspan = rowspan == 0 ? 1 : rowspan;
-    let pos = colGraph.getBlockRowPosition(block.classId);
-    cbOverlap[block.classId] = [maxOverlap, pos, rowspan];
-  });
-  let d: { [key: number]: BlockMetadata } = {};
-
-  for (let block of data) {
-    let blockStartTimeMM = getTimeInMinutes(block.startTime);
-    let blockEndTimeMM = getTimeInMinutes(block.endTime);
-    let blockPosY = timelerp(ttConfig, blockStartTimeMM);
-    let blockHeight = getBlockHeight(
-      ttConfig,
-      blockStartTimeMM,
-      blockEndTimeMM
-    );
-
-    // let blockWidth =
-    //   ttConfig.displayWidth *
-    //   (cbOverlap[block.classId][2] / cbOverlap[block.classId][0]);
-    let blockWidth = (cbOverlap[block.classId][2] / cbOverlap[block.classId][0]) * 100.0;
-
-    let posXOffset =
-      (cbOverlap[block.classId][1] / cbOverlap[block.classId][0]) *
-      ttConfig.displayWidth;
-    d[block.classId] = {
-      posY: blockPosY,
-      height: blockHeight,
-      posX: posXOffset,
-      width: blockWidth,
-    };
-  }
-  return d;
 }
 
 export default Weekday;

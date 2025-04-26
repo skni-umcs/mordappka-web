@@ -1,4 +1,4 @@
-import { ClassDataDTO } from "../../Timetable";
+import { ClassData, ClassDataDTO } from "../../Timetable";
 import { overlap } from "./util";
 
 type Graph = {
@@ -12,7 +12,7 @@ export class CollisionGraph{
     private edges: Graph;
     private groups: number[][];
     private groupId: number[];
-    constructor(data:ClassDataDTO[]){
+    constructor(data:ClassData[]){
         //Groups - podzbiory zawierające spójne grafy (pojedyńczy niepołączony wierzchołek jest spójny)
         this.groupId = [];
         this.groups = [];
@@ -24,14 +24,14 @@ export class CollisionGraph{
         let visited = new Array<boolean>(data.length).fill(false);
         
         for(let i = 0;i<data.length;i++){
-            this.indexMap[data[i].classId] = i;
+            this.indexMap[data[i].cbDTO.classId] = i;
             this.edges[i] = [];
         }        
         //generate edges
         for(let i = 0; i < data.length; i++){
             for (let j = 0; j < data.length; j++) {
                 if(i != j){
-                    if(overlap(data[i],data[j])){
+                    if(overlap(data[i].cbDTO,data[j].cbDTO) && data[i].visible && data[j].visible){
                         this.edges[i].push(j); 
                     }
                 }

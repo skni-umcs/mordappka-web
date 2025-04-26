@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { ClassDataDTO } from '../../Timetable';
-import { BlockMetadata } from '../Weekday';
+import { ClassData, ClassDataDTO } from '../../Timetable';
 import './ClassBlock.scss'
 
 interface Prop{
-    block:ClassDataDTO;
-    metadata:BlockMetadata;
+    block:ClassData;
+    onVisibilityChange: (block: ClassDataDTO, visible: boolean) => void;
 }
 
 function ClassBlock(prop:Prop){
-    const { posX , posY, height, width } = prop.metadata;
+    const { posX , posY, height, width } = prop.block.properties;
     const [hovered, setHovered] = useState(false);
-
+    // const [prop, setBlockVisible] = useState(true);
     return <div
     style={{
       position: 'absolute',
@@ -26,8 +25,21 @@ function ClassBlock(prop:Prop){
     onMouseEnter={() => setHovered(true)}
     onMouseLeave={() => setHovered(false)}
   >
-        <p>{prop.block.subjectName}</p>
-        <p>{prop.block.startTime} - {prop.block.endTime}</p>
+       {hovered && (
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input
+            type="checkbox"
+            checked={prop.block.visible}
+            onChange={(e) => prop.onVisibilityChange(prop.block.cbDTO, e.target.checked)}
+          />
+          Ukryj po najechaniu
+        </label>
+      )}
+        <p>{prop.block.cbDTO.subjectName}</p>
+        <p>{prop.block.cbDTO.startTime} - {prop.block.cbDTO.endTime}</p>
     </div>
+}
+function toggle(cb :ClassData){
+    cb.visible=false;
 }
 export default ClassBlock;
