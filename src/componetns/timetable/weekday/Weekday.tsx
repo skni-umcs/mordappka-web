@@ -41,7 +41,7 @@ import "./Weekday.scss";
 interface Prop {
   classBlocks: ClassData[];
   weekday:string;
-  onVisibilityChange: (block: ClassDataDTO, visible: boolean) => void;
+  onVisibilityChange: (block: number, visible: boolean) => void;
 }
 
 export interface WeekdayConfig {

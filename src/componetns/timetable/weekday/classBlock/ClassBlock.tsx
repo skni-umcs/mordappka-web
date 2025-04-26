@@ -4,14 +4,16 @@ import './ClassBlock.scss'
 
 interface Prop{
     block:ClassData;
-    onVisibilityChange: (block: ClassDataDTO, visible: boolean) => void;
+    onVisibilityChange: (block: number, visible: boolean) => void;
 }
 
 function ClassBlock(prop:Prop){
     const { posX , posY, height, width } = prop.block.properties;
     const [hovered, setHovered] = useState(false);
     // const [prop, setBlockVisible] = useState(true);
+    // console.log(prop.block);
     return <div
+    hidden={!prop.block.visible}
     style={{
       position: 'absolute',
       top: `${posY}px`,
@@ -30,7 +32,7 @@ function ClassBlock(prop:Prop){
           <input
             type="checkbox"
             checked={prop.block.visible}
-            onChange={(e) => prop.onVisibilityChange(prop.block.cbDTO, e.target.checked)}
+            onChange={(e) => prop.onVisibilityChange(prop.block.cbDTO.classId, e.target.checked)}
           />
           Ukryj po najechaniu
         </label>

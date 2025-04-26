@@ -34,16 +34,18 @@ export interface BlockMetadata {
 function Timetable(){
     const [timetable, setTimetable] = useState<ClassData[][]>([[],[],[],[],[],[],[]]);
 
-    const updateVisibility = (block: ClassDataDTO, visible_: boolean) => {
+    const updateVisibility = (blockId: number, visible_: boolean) => {
         setTimetable(prevTimetable => 
             {
+                
+                prevTimetable = prevTimetable.map((dayBlocks) => dayBlocks.map(block => 
+                    block.cbDTO.classId === blockId 
+                      ? { ...block, visible: visible_ }: block));
                 prevTimetable.forEach
                 ((e) => {generateOverlapData(ttConfig, e.filter(cb=>cb.visible))});
-                prevTimetable = prevTimetable.map((dayBlocks) => dayBlocks.map(block => 
-                    block.cbDTO.classId === block.cbDTO.classId 
-                      ? { ...block, visible: !block.visible }: block))
                 return prevTimetable;
             });
+        console.log(timetable);
       };
       const weekDayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
       const startTime = getTimeInMinutes("8:00");
