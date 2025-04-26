@@ -1,13 +1,15 @@
 .classBlock {
     position: absolute;
-    background-color: #4a6047;
+    background-color: #eaedea;
+    color:rgb(34, 33, 33);
     // margin: 4px;
     // margin-bottom: 10px;
     border-radius: 5px;
-    border-width: 2px;
-    border-style: dashed;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 3px 3px grey;
   }
   
-  .classBlock p {
+.classBlock p {
     margin: 5px 0;
-  }
+}

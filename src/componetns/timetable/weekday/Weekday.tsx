@@ -42,6 +42,7 @@ import "./Weekday.scss";
 
 interface Prop {
   classBlocks: ClassDataDTO[];
+  weekday:number;
 }
 export interface BlockMetadata {
   posX?: number;
@@ -58,6 +59,7 @@ export interface WeekdayConfig {
 }
 
 function Weekday(prop: Prop) {
+  const weekDayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
   const startTime = getTimeInMinutes("8:00");
   const endTime = getTimeInMinutes("20:00");
   const ttConfig: WeekdayConfig = {
@@ -76,6 +78,8 @@ function Weekday(prop: Prop) {
   const overlapDict = generateOverlapData(ttConfig, prop.classBlocks);
   //calculate metadata
   return (
+    <div>
+      <h2>{weekDayNames[prop.weekday-1]}</h2>
     <div className="weekday">
       {prop.classBlocks.map((cb) => {
         //calculate block metadata
@@ -87,6 +91,7 @@ function Weekday(prop: Prop) {
           />
         );
       })}
+    </div>
     </div>
   );
 }
@@ -112,9 +117,11 @@ function generateOverlapData(ttConfig: WeekdayConfig, data: ClassDataDTO[]): {[k
       blockStartTimeMM,
       blockEndTimeMM
     );
-    let blockWidth =
-      ttConfig.displayWidth *
-      (cbOverlap[block.classId][2] / cbOverlap[block.classId][0]);
+
+    // let blockWidth =
+    //   ttConfig.displayWidth *
+    //   (cbOverlap[block.classId][2] / cbOverlap[block.classId][0]);
+    let blockWidth = (cbOverlap[block.classId][2] / cbOverlap[block.classId][0]) * 100.0;
 
     let posXOffset =
       (cbOverlap[block.classId][1] / cbOverlap[block.classId][0]) *
