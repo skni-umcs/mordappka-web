@@ -12,6 +12,10 @@ function ClassBlock(prop:Prop){
     const [hovered, setHovered] = useState(false);
     // const [prop, setBlockVisible] = useState(true);
     // console.log(prop.block);
+    const stimeparts = prop.block.cbDTO.startTime.split(':');
+    const etimeparts = prop.block.cbDTO.endTime.split(':'); 
+    const startTimeFormated = stimeparts[0]+":"+stimeparts[1];
+    const endTimeFormated = etimeparts[0]+":"+etimeparts[1];
     return <div
     hidden={!prop.block.visible}
     style={{
@@ -38,7 +42,7 @@ function ClassBlock(prop:Prop){
         </label>
       )}
         <p>{prop.block.cbDTO.subjectName}</p>
-        <p>{prop.block.cbDTO.startTime} - {prop.block.cbDTO.endTime}</p>
+        <p>{startTimeFormated} - {endTimeFormated}</p>
     </div>
 }
 function toggle(cb :ClassData){
