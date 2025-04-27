@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import './Timetable.scss'
-import Weekday from './weekday/Weekday';
-// import axios from 'axios';
+import axios from 'axios';
+import Weekday, { WeekdayConfig } from './weekday/Weekday';
+import { generateOverlapData, getTimeInMinutes } from './weekday/util/util';
 
 //to trzeba przenieść w jakieś odpowiednie miejsce
 export interface ClassDataDTO{
@@ -17,93 +18,87 @@ export interface ClassDataDTO{
     roomId: number;
     group: string;
 }
+//additional attached properties
+export interface ClassData{
+    cbDTO: ClassDataDTO;
+    properties: BlockMetadata;
+    visible:boolean;
+}
+export interface BlockMetadata {
+    posX?: number;
+    posY: number;
+    height: number;
+    width?: number;
+}
 
 function Timetable(){
+    const [timetable, setTimetable] = useState<ClassData[][]>([[],[],[],[],[],[],[]]);
 
-    const [timetable, setTimetable] = useState<ClassDataDTO[]>([]);
+    const updateVisibility = (blockId: number, visible_: boolean) => {
+        setTimetable(prevTimetable => 
+            {
+                
+                prevTimetable = prevTimetable.map((dayBlocks) => dayBlocks.map(block => 
+                    block.cbDTO.classId === blockId 
+                      ? { ...block, visible: visible_ }: block));
+                prevTimetable.forEach
+                ((e) => {generateOverlapData(ttConfig, e.filter(cb=>cb.visible))});
+                return prevTimetable;
+            });
+        console.log(timetable);
+      };
+      const weekDayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
+      const startTime = getTimeInMinutes("8:00");
+      const endTime = getTimeInMinutes("20:00");
+      // console.log(prop);
+      const ttConfig: WeekdayConfig = {
+        startTime,
+        endTime,
+        duration: endTime - startTime,
+        maxDisplayHeight: 700,
+        displayWidth: 320,
+      };
+        
+      
 
     // (?????) zrobić serwis do zarządzania danymi timetable (?????)
-    // useEffect(()=>{
-    //     axios.get<ClassDataDTO[]>("/api/classes/year?id=15") //temporary URL
-    //     .then((response)=>{
-    //         setTimetable(response.data);
-    //     }).catch((error)=>{
-    //         console.error("Error while fetching data. " + error);
-    //     })
-    // },[])
     useEffect(()=>{
-        setTimetable([
-            {
-                classId: 11,
-                classType: "Wykład",
-                subjectName: "Algebra",
-                teacherName: "Andrzej Kowalski",
-                startTime: "8:45",
-                endTime: "11:01",
-                weekday: 1,
-                roomNumber: "C453",
-                teacherId: 32,
-                roomId: 34,
-                group: "1/1"
-            },{
-            classId: 1,
-            classType: "Wykład",
-            subjectName: "Układy mikroporcesorowe",
-            teacherName: "Andrzej Kowalski",
-            startTime: "8:00",
-            endTime: "12:00",
-            weekday: 1,
-            roomNumber: "C453",
-            teacherId: 32,
-            roomId: 34,
-            group: "1/1"
-        },{
-            classId: 2,
-            classType: "Laby",
-            subjectName: "Inżynieria Oprogramowania",
-            teacherName: "Andrzej Kowalski",
-            startTime: "11:30",
-            endTime: "14:25",
-            weekday: 1,
-            roomNumber: "C453",
-            teacherId: 32,
-            roomId: 34,
-            group: "1/1"
-        },
-        {
-            classId: 223,
-            classType: "Laby",
-            subjectName: "ASYKO<3",
-            teacherName: "Andrzej Kowalski",
-            startTime: "11:00",
-            endTime: "12:00",
-            weekday: 1,
-            roomNumber: "C453",
-            teacherId: 32,
-            roomId: 34,
-            group: "1/1"
-        },
-        {
-            classId: 2231,
-            classType: "Laby",
-            subjectName: "Bazy danych",
-            teacherName: "Andrzej Kowalski",
-            startTime: "15:00",
-            endTime: "18:00",
-            weekday: 1,
-            roomNumber: "C453",
-            teacherId: 32,
-            roomId: 34,
-            group: "1/1"
-        }
-    ]);
+        axios.get<ClassDataDTO[]>("/api/classes/year?id=842") //temporary URL
+        .then((response)=>{
+            let timetableData:ClassData[] = response.data.map(cb => { return {
+                cbDTO:cb,
+                visible:true,
+                properties:{
+                    posX:0,
+                    posY:0,
+                    height:0,
+                }
+            }
+            })
+            timetableData.sort((cb1, cb2) => {
+                const t1 = getTimeInMinutes(cb1.cbDTO.startTime);
+                const t2 = getTimeInMinutes(cb2.cbDTO.startTime);
+                return t1 > t2 ? 1 : 0;
+              });
+            
+            const days = [1,2,3,4,5,6,7];
+            let timeTableDataDaily:ClassData[][] = days
+                .map(day => timetableData
+                    .filter(cb=>cb.cbDTO.weekday == day));
+            timeTableDataDaily.forEach(
+                (e) => {generateOverlapData(ttConfig, e.filter(cb=>cb.visible))});
+            setTimetable(timeTableDataDaily);
+        }).catch((error)=>{
+            console.error("Error while fetching data. " + error);
+        })
     },[])
+
     
 
     return <div className="timetable">
-        {/* TODO trzeba tak przefiltrować, żeby każdy weekday dostawał swój subset zajęć */}
-        {/* {timetable.map( (tt) => (<Weekday key={tt.classId} classBlocks={tt} />))} */}
-        <Weekday classBlocks={timetable}/>
+        {timetable.map((day, i)=>
+        <Weekday key={i} classBlocks={day} weekday={weekDayNames[i]} onVisibilityChange={updateVisibility}/>)
+        }
     </div>
 }
 export default Timetable;
