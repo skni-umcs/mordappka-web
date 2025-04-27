@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClassData, ClassDataDTO } from '../../Timetable';
+import { ClassData } from '../../Timetable'; // removed ClassDataDTO
 import './ClassBlock.scss'
 
 interface Prop{
@@ -45,7 +45,7 @@ function ClassBlock(prop:Prop){
         <p>{startTimeFormated} - {endTimeFormated}</p>
     </div>
 }
-function toggle(cb :ClassData){
-    cb.visible=false;
-}
+// function toggle(cb :ClassData){
+//     cb.visible=false;
+// }
 export default ClassBlock;
