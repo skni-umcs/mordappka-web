@@ -1,4 +1,4 @@
-import { ClassData, ClassDataDTO } from "../Timetable";
+import { ClassData } from "../Timetable"; // ClassDataDTO removed
 import ClassBlock from "./classBlock/ClassBlock";
 import "./Weekday.scss";
 

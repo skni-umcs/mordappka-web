@@ -1,4 +1,4 @@
-import { ClassData, ClassDataDTO } from "../../Timetable";
+import { ClassData } from "../../Timetable"; // ClassDataDTO removed
 import { overlap } from "./util";
 
 type Graph = {

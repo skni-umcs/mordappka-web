@@ -45,7 +45,7 @@ function ClassBlock(prop:Prop){
         <p>{startTimeFormated} - {endTimeFormated}</p>
     </div>
 }
-function toggle(cb :ClassData){
-    cb.visible=false;
-}
+// function toggle(cb :ClassData){
+//     cb.visible=false;
+// }
 export default ClassBlock;
