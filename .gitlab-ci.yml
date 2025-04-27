@@ -3,6 +3,16 @@ stages:
   - dockerize
   - deploy
 
+build-on-mr:
+  stage: build
+  image: node:latest
+  script:
+    - npm ci
+    - npm run build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+
 build-react:
   stage: build
   image: node:latest
