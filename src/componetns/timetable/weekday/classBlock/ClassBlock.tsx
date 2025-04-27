@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClassData, ClassDataDTO } from '../../Timetable';
+import { ClassData } from '../../Timetable'; // removed ClassDataDTO
 import './ClassBlock.scss'
 
 interface Prop{
