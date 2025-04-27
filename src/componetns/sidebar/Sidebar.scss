@@ -1,6 +1,6 @@
 .sidebar {
   background: #2c3e50;
-  padding: 1rem;
+  padding: 2rem;
   transition: width 0.3s ease;
   overflow: hidden;
   position: absolute;
@@ -12,6 +12,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: left;
+
+  gap: 3rem;
 
   &.open {
     width: 200px;
