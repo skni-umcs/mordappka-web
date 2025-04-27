@@ -63,7 +63,7 @@ function Timetable(){
 
     // (?????) zrobić serwis do zarządzania danymi timetable (?????)
     useEffect(()=>{
-        axios.get<ClassDataDTO[]>("/api/classes/year?id=842") //temporary URL
+        axios.get<ClassDataDTO[]>("http://10.50.50.77:8081/api/classes/year?id=842") //temporary URL
         .then((response)=>{
             let timetableData:ClassData[] = response.data.map(cb => { return {
                 cbDTO:cb,
