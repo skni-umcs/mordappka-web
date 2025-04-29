@@ -1,9 +1,21 @@
 .timetable{
     margin: 10px;
-    background-color: rgb(54, 51, 44);
+    // background-color: rgb(54, 51, 44);
     display: flex;
+    flex-direction: column;
     box-shadow: 2px;
     border-width: 2px;
-    width: max-content;
     font-size: medium;
+    width: 100%;
+    height:100%;
+    flex-grow: 1;
+    
+}
+.weekdays{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+h1{
+    font-size: 2rem;
 }

@@ -63,7 +63,7 @@ function Timetable(){
 
     // (?????) zrobić serwis do zarządzania danymi timetable (?????)
     useEffect(()=>{
-        axios.get<ClassDataDTO[]>("http://10.50.50.77:8081/api/classes/year?id=842") //temporary URL
+        axios.get<ClassDataDTO[]>("/api/classes/year?id=842") //temporary URL
         .then((response)=>{
             let timetableData:ClassData[] = response.data.map(cb => { return {
                 cbDTO:cb,
@@ -96,9 +96,16 @@ function Timetable(){
     
 
     return <div className="timetable">
-        {timetable.map((day, i)=>
-        <Weekday key={i} classBlocks={day} weekday={weekDayNames[i]} onVisibilityChange={updateVisibility}/>)
+        <h1>Informatyka 2 rok st. II 2024/2025 Zima</h1>
+        <div className='weekdays'>
+        {
+        timetable.map((day, i)=>{
+            if(i<5){
+            return (
+                <Weekday key={i} classBlocks={day} weekday={weekDayNames[i]} onVisibilityChange={updateVisibility}/>
+            )}})
         }
+        </div>
     </div>
 }
 export default Timetable;

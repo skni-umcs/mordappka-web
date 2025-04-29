@@ -14,6 +14,7 @@ function MainLayout({children}: Props) {
             <main>{children}</main>
             <Footer/>
         </div>
+        
     </div>
 }
 export default MainLayout;
