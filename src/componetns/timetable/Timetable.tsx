@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './Timetable.scss'
 import axios from 'axios';
 import Weekday, { WeekdayConfig } from './weekday/Weekday';
-import { generateOverlapData, getTimeInMinutes } from './weekday/util/util';
+import { generateOverlapData, getTimeInMinutes, timelerp } from './weekday/util/util';
 
 //to trzeba przenieść w jakieś odpowiednie miejsce
 export interface ClassDataDTO{
@@ -56,7 +56,6 @@ function Timetable(){
         endTime,
         duration: endTime - startTime,
         maxDisplayHeight: 700,
-        displayWidth: 320,
       };
         
       
@@ -93,10 +92,20 @@ function Timetable(){
         })
     },[])
 
-    
+    const times=['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
 
     return <div className="timetable">
         <h1>Informatyka 2 rok st. II 2024/2025 Zima</h1>
+        <div className="hour-lines">
+            {times.map((t) => (
+                <div key={t} className="hour-line" style={{ left:'40px',top: `${timelerp(ttConfig, getTimeInMinutes(t))+75}px` }} />
+            ))}
+        </div>
+        <div className="hour-lines">
+            {times.map((t) => (
+                <div key={t} className='hour' style={{ top: `${timelerp(ttConfig, getTimeInMinutes(t))+63}px` }} > {t}</div>
+            ))}
+        </div>
         <div className='weekdays'>
         {
         timetable.map((day, i)=>{

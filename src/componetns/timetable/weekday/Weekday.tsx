@@ -49,7 +49,6 @@ export interface WeekdayConfig {
   endTime: number;
   duration: number;
   maxDisplayHeight: number;
-  displayWidth: number;
 }
 
 function Weekday(prop: Prop) {

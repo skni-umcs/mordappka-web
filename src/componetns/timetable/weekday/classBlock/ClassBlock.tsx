@@ -21,7 +21,7 @@ function ClassBlock(prop:Prop){
     style={{
       position: 'absolute',
       top: `${posY}px`,
-      left: hovered ? '0px' : `${posX}px`,
+      left: hovered ? '0%' : `${posX}%`,
       height: hovered && height<130 ? '130px':`${height}px`,
       width: hovered ? '100%' : `${width}%`,
       transition: 'all 0.3s ease',

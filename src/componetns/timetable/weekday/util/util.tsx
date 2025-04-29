@@ -30,7 +30,7 @@ export function generateOverlapData(ttConfig: WeekdayConfig, data: ClassData[]):
       let rowspan = colGraph.getRowspan(block.cbDTO.classId);
       rowspan = rowspan == 0 ? 1 : rowspan;
       let pos = colGraph.getBlockRowPosition(block.cbDTO.classId);
-      cbOverlap[block.cbDTO.classId] = [maxOverlap, pos, rowspan];
+      cbOverlap[block.cbDTO.classId] = [maxOverlap, pos, 1];
     });
     let d: { [key: number]: BlockMetadata } = {};
   
@@ -45,9 +45,7 @@ export function generateOverlapData(ttConfig: WeekdayConfig, data: ClassData[]):
       );
   
       let blockWidth = (cbOverlap[block.cbDTO.classId][2] / cbOverlap[block.cbDTO.classId][0]) * 100.0;
-      let posXOffset =
-        (cbOverlap[block.cbDTO.classId][1] / cbOverlap[block.cbDTO.classId][0]) *
-        ttConfig.displayWidth;
+      let posXOffset = (cbOverlap[block.cbDTO.classId][1] / cbOverlap[block.cbDTO.classId][0]) * 100.0;
   
       block.properties={
         posY: blockPosY,
