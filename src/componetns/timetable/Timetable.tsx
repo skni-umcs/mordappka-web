@@ -3,6 +3,7 @@ import './Timetable.scss'
 import axios from 'axios';
 import Weekday, { WeekdayConfig } from './weekday/Weekday';
 import { generateOverlapData, getTimeInMinutes } from './weekday/util/util';
+import MajorSelectModal from '../Modals/MajorSelectModal/MajorSelectModal';
 
 //to trzeba przenieść w jakieś odpowiednie miejsce
 export interface ClassDataDTO{
@@ -32,8 +33,40 @@ export interface BlockMetadata {
 }
 
 function Timetable(){
+    function loadData(id:number){
+        useEffect(()=>{
+            axios.get<ClassDataDTO[]>(`/api/classes/year?id=${id}`) //temporary URL
+            .then((response)=>{
+                let timetableData:ClassData[] = response.data.map(cb => { return {
+                    cbDTO:cb,
+                    visible:true,
+                    properties:{
+                        posX:0,
+                        posY:0,
+                        height:0,
+                    }
+                }
+                })
+                timetableData.sort((cb1, cb2) => {
+                    const t1 = getTimeInMinutes(cb1.cbDTO.startTime);
+                    const t2 = getTimeInMinutes(cb2.cbDTO.startTime);
+                    return t1 > t2 ? 1 : 0;
+                  });
+                
+                const days = [1,2,3,4,5,6,7];
+                let timeTableDataDaily:ClassData[][] = days
+                    .map(day => timetableData
+                        .filter(cb=>cb.cbDTO.weekday == day));
+                timeTableDataDaily.forEach(
+                    (e) => {generateOverlapData(ttConfig, e.filter(cb=>cb.visible))});
+                setTimetable(timeTableDataDaily);
+            }).catch((error)=>{
+                console.error("Error while fetching data. " + error);
+            })
+        },[])
+    }
+    loadData(842);
     const [timetable, setTimetable] = useState<ClassData[][]>([[],[],[],[],[],[],[]]);
-
     const updateVisibility = (blockId: number, visible_: boolean) => {
         setTimetable(prevTimetable => 
             {
@@ -62,43 +95,16 @@ function Timetable(){
       
 
     // (?????) zrobić serwis do zarządzania danymi timetable (?????)
-    useEffect(()=>{
-        axios.get<ClassDataDTO[]>("/api/classes/year?id=842") //temporary URL
-        .then((response)=>{
-            let timetableData:ClassData[] = response.data.map(cb => { return {
-                cbDTO:cb,
-                visible:true,
-                properties:{
-                    posX:0,
-                    posY:0,
-                    height:0,
-                }
-            }
-            })
-            timetableData.sort((cb1, cb2) => {
-                const t1 = getTimeInMinutes(cb1.cbDTO.startTime);
-                const t2 = getTimeInMinutes(cb2.cbDTO.startTime);
-                return t1 > t2 ? 1 : 0;
-              });
-            
-            const days = [1,2,3,4,5,6,7];
-            let timeTableDataDaily:ClassData[][] = days
-                .map(day => timetableData
-                    .filter(cb=>cb.cbDTO.weekday == day));
-            timeTableDataDaily.forEach(
-                (e) => {generateOverlapData(ttConfig, e.filter(cb=>cb.visible))});
-            setTimetable(timeTableDataDaily);
-        }).catch((error)=>{
-            console.error("Error while fetching data. " + error);
-        })
-    },[])
+    
 
     
 
     return <div className="timetable">
+        <MajorSelectModal onSelectMajor={data=>{loadData(data.termGroupId)}}/>
         {timetable.map((day, i)=>
         <Weekday key={i} classBlocks={day} weekday={weekDayNames[i]} onVisibilityChange={updateVisibility}/>)
         }
     </div>
 }
+
 export default Timetable;
