@@ -1,5 +1,14 @@
 .weekday{
-    margin:10px;
+    margin:auto;
     height: 700px;
     position: relative;
+}
+.diag {
+    background: repeating-linear-gradient(
+        -45deg,
+        #ffffff,
+        hsl(0, 0%, 100%) 20px,
+        #b3b2b2 2px,
+        #b3b2b2 22px
+      );
 }

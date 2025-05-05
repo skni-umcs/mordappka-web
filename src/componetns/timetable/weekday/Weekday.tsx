@@ -1,4 +1,4 @@
-import { ClassData, ClassDataDTO } from "../Timetable";
+import { ClassData } from "../Timetable";
 import ClassBlock from "./classBlock/ClassBlock";
 import "./Weekday.scss";
 
@@ -53,13 +53,17 @@ export interface WeekdayConfig {
 }
 
 function Weekday(prop: Prop) {
+  // TODO: Jeśli sobota i niedziela nic nie zawierają zostawić puste domyślnie.
+  if(prop.weekday == "Sobota" || prop.weekday == "Niedziela"){
+    return <></>
+  }
   //calculate metadata
   return (
     <div  style={{
       width:prop.classBlocks.length===0?'120px':'320px'
   }}>
       <h2>{prop.weekday}</h2>
-    <div className="weekday">
+    <div className="weekday diag">
       {prop.classBlocks.map((cb) => {
         return (
           <ClassBlock

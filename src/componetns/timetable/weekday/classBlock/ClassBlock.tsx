@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClassData, ClassDataDTO } from '../../Timetable';
+import { ClassData } from '../../Timetable';
 import './ClassBlock.scss'
 
 interface Prop{
@@ -14,8 +14,7 @@ function ClassBlock(prop:Prop){
     // console.log(prop.block);
     const stimeparts = prop.block.cbDTO.startTime.split(':');
     const etimeparts = prop.block.cbDTO.endTime.split(':'); 
-    const startTimeFormated = stimeparts[0]+":"+stimeparts[1];
-    const endTimeFormated = etimeparts[0]+":"+etimeparts[1];
+    const timeformmated = stimeparts[0]+":"+stimeparts[1] + "-"+etimeparts[0]+":"+etimeparts[1];
     return <div
     hidden={!prop.block.visible}
     style={{
@@ -31,21 +30,17 @@ function ClassBlock(prop:Prop){
     onMouseEnter={() => setHovered(true)}
     onMouseLeave={() => setHovered(false)}
   >
-       {hovered && (
-        <label style={{ display: 'block', marginTop: '8px' }}>
+        <p className='room'>{prop.block.cbDTO.roomNumber.split(' ').filter((_, i)=>i<2).join('')}
+        {hovered && (
           <input
             type="checkbox"
             checked={prop.block.visible}
             onChange={(e) => prop.onVisibilityChange(prop.block.cbDTO.classId, e.target.checked)}
-          />
-          Ukryj po najechaniu
-        </label>
-      )}
+          />)}          🕗{timeformmated}</p>
         <p>{prop.block.cbDTO.subjectName}</p>
-        <p>{startTimeFormated} - {endTimeFormated}</p>
+        <p>{prop.block.cbDTO.teacherName}</p>
+        <p></p>
+
     </div>
-}
-function toggle(cb :ClassData){
-    cb.visible=false;
 }
 export default ClassBlock;

@@ -10,6 +10,7 @@ export interface Major {
   }
   interface Props {
     onSelectMajor: (major: Major) => void;
+    // isOpen:boolean;
   }
 export default function MajorSelectModal(prop:Props){
     const [open, setOpen] = useState(true);

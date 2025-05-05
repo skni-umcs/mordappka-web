@@ -7,9 +7,17 @@
     border-radius: 5px;
     border-width: 1px;
     border-style: solid;
-    box-shadow: 3px 3px grey;
+    box-shadow: 0px 3px 2px grey;
   }
   
 .classBlock p {
+  font-family: 'Arial';
+  padding-left:5px;
     margin: 5px 0;
+    text-align: left;
+}
+.room{
+  font-size: small;
+  align-items: end;
+
 }
